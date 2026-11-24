@@ -1,0 +1,5 @@
+1. users are already created and venue is also already created  
+2. user know venue id
+3. venue are not having booking limits
+4. booking in Map object
+5. No api keys
