@@ -2,3 +2,5 @@ node_modules
 *.tmp
 .DS_Store
 context/*.pdf
+*.mp4
+*.mov
