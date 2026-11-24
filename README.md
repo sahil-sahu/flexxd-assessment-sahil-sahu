@@ -7,6 +7,41 @@ Node + Express, in-memory store. Users/venues seeded from `data/users.json` and 
     npm test
     bash demo.sh     # curl walkthrough (server must be running)
 
+## Try it with curl
+Start the server (`npm start`), then:
+
+```bash
+B=http://localhost:3000; J='Content-Type: application/json'
+
+# 1. Book a visit (201): deducts 1 credit, returns the booking with its redemptionCode
+curl -X POST $B/bookings -H "$J" -d '{"userId":"u1","venueId":"v1"}'
+
+# 2. Same user, same venue again (409 DUPLICATE_BOOKING)
+curl -X POST $B/bookings -H "$J" -d '{"userId":"u1","venueId":"v1"}'
+
+# 3. User with no credits (402 INSUFFICIENT_CREDITS)
+curl -X POST $B/bookings -H "$J" -d '{"userId":"u2","venueId":"v1"}'
+
+# 4. Unknown user / venue (404) and missing fields (400)
+curl -X POST $B/bookings -H "$J" -d '{"userId":"ghost","venueId":"v1"}'
+curl -X POST $B/bookings -H "$J" -d '{"userId":"u1","venueId":"ghost"}'
+curl -X POST $B/bookings -H "$J" -d '{}'
+
+# 5. Redeem: paste the redemptionCode from step 1 (200). Again: 409 ALREADY_REDEEMED
+curl -X POST $B/bookings/redeem -H "$J" -d '{"code":"PASTE_CODE_HERE"}'
+curl -X POST $B/bookings/redeem -H "$J" -d '{"code":"PASTE_CODE_HERE"}'
+
+# 6. Unknown code (404 CODE_NOT_FOUND)
+curl -X POST $B/bookings/redeem -H "$J" -d '{"code":"DEADBEEF"}'
+
+# 7. User with current credits and all bookings (200); unknown user (404)
+curl $B/users/u1
+curl $B/users/ghost
+```
+
+Expired codes (410 `CODE_EXPIRED`) take 24h to occur, so that case is covered in `test/edge-cases.test.js`.
+`bash demo.sh` runs the main calls in one go. Each real booking spends one of Alice's credits (saved in `data/users.json`).
+
 ## Assumptions
 1. Users and venues already exist (seeded from JSON, no create endpoints).
 2. The user knows the venue id.
