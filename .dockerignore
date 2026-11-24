@@ -1,0 +1,7 @@
+node_modules
+test
+context
+docs
+demo.sh
+.git
+*.md
