@@ -1,0 +1,4 @@
+[
+  { "id": "v1", "name": "Iron Gym", "pricePerVisit": 1, "dailyCapacity": 20 },
+  { "id": "v2", "name": "Zen Yoga", "pricePerVisit": 1, "dailyCapacity": 10 }
+]
